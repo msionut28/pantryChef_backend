@@ -32,7 +32,7 @@ const pantryChef = mongoose.createConnection(process.env.DATABASE_URL)
 const storage = multer.diskStorage({
     destination: './assets',
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
 })
 const upload = multer({ storage: storage })
@@ -44,7 +44,10 @@ const recipeSchema = new mongoose.Schema({
 })
 const userSchema = new mongoose.Schema({
     userName: String,
-    lastLogin: String
+    lastLogin: String,
+    membership: {type: Number, default: 0},
+    recipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'generatedRecipe' }],
+    isAdmin: {type: Boolean, default: false}
 })
 const generatedRecipeSchema = new mongoose.Schema({
     title: String,
@@ -118,16 +121,79 @@ app.get('/recipes/:id', async (req, res) => {
 })
 app.post('/useradd', (req, res) => {
     const data = req.body
+    const membershipStart = 0
     userAdded.findOne({ userName: data.userName})
     .then((user) => {
         if(user) {
             user.lastLogin = (data.lastLogin)
             user.save()
         } else {
-            const addUser = new userAdded({userName: data.userName, lastLogin: data.lastLogin })
+            const addUser = new userAdded({userName: data.userName, lastLogin: data.lastLogin, membership: membershipStart})
             addUser.save()
         }
     })
-    console.log(`User's ${data.userName} last login was: ${data.lastLogin}`);
+
     res.sendStatus(200)
 })
+app.put('/users/:userName', async (req, res) => {
+    const userName = req.params.userName
+    const newMembership = req.body.membership
+    try {
+        const updatedUser = await userAdded.findOneAndUpdate(
+            { userName: userName },
+            { $set: { membership: newMembership } },
+            { new: true }
+          );
+          if (updatedUser){
+            return res.status(200).json({ message: 'Membership updated successfully' })
+    } else{
+        return res.status(404).json({message: 'Membership could not be updated'})
+    }
+    }catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+      }
+})
+app.post('/users/:userName/addrecipe', async (req, res) => {
+    const userName = req.params.userName
+    const recipeId = req.body.recipeId
+    const user = await userAdded.findOne({ userName: userName })
+    user.recipes.push(recipeId)
+  
+    try {
+      await user.save();
+      return res.status(200).json({ message: 'Recipe added to user' })
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json({ message: 'Failed to update user record' })
+    }
+  });
+  
+app.get('/users/:userName', async (req, res) => {
+    const userName = req.params.userName
+    const user = await userAdded.findOne({userName: userName})
+    res.json(user)
+})
+app.get('/users/', async (req, res) => {
+    const user = await userAdded.find({})
+    res.json(user)
+})
+
+app.post('/logincheck', async (req, res) => {
+    const userName = req.body.userName;
+    try {
+        const user = await userAdded.findOne({ userName: userName });
+        if (user) {
+            if (user.membership === 0) {
+                res.json(true);
+            } else {
+                res.json(false);
+            }
+        } else {
+            res.json(true);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
