@@ -33,3 +33,24 @@ export async function recipeGenerator (Recipe, req, res) {
         console.error(error)
     }
 }
+
+export async function individualRecipe(Recipe, req, res){
+    const id = req.params.id
+    const generated = await Recipe.findById(id)
+    res.json(generated)
+}
+
+export async function allRecipes(Recipe, res){
+    const generated = await Recipe.find({});
+    res.json(generated) 
+}
+
+export async function deleteRecipe(Recipe, req, res){
+  Recipe.deleteOne({"_id": req.params.id})
+  .then(() => {
+      res.json({message: 'deleted'})
+  })
+  .catch(error => {
+      res.sendStatus(500)
+  })
+}

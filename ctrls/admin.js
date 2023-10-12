@@ -15,9 +15,7 @@ export async function adminGenerator(User) {
                 isAdmin: true
             })
             addAdmin.save();
-        } else {
-            console.log('No need to create a new admin, it already exists.');
-        }
+        } 
     }catch(error) {
         console.error('COULD NOT CREATE A NEW ADMIN', error)
     }

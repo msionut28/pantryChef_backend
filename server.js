@@ -5,19 +5,10 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path'
 import 'dotenv/config';
-import { userAdd } from './ctrls/userAdd.js'
-import { allUsers } from './ctrls/allUsers.js';
-import { individualUser } from './ctrls/individualUser.js';
-import { firstTimeChecker } from './ctrls/loginChecker.js';
 import { adminGenerator } from './ctrls/admin.js';
-import { membershipUpdater } from './ctrls/membershipUpdater.js'
-import { postCreator } from './ctrls/postCreator.js';
-import { allPosts } from './ctrls/allPosts.js';
-import { individualPost } from './ctrls/individualPost.js';
-import { recipeGenerator } from './ctrls/recipeGenerator.js';
-import { allRecipes } from './ctrls/allRecipes.js';
-import { individualRecipe } from './ctrls/individualRecipe.js';
-import { userRecipe } from './ctrls/usersRecipe.js';
+import { loginCredentials, allUsers, individualUser, firstTimeChecker, membershipUpdater, userAdd, userRecipe } from './ctrls/userFunctions.js';
+import { postCreator, allPosts, individualPost } from './ctrls/postsFunctions.js';
+import { recipeGenerator, allRecipes, individualRecipe, deleteRecipe} from './ctrls/recipeFunctions.js';
 import { generatedRecipeSchema, recipeSchema, userSchema } from './schemas/schemas.js';
 
 
@@ -68,6 +59,9 @@ app.get('/recipes', async(req, res) => {
 app.get('/recipes/:id', async (req, res) => {
     individualPost(Recipe, req, res)
 })
+app.delete('/recipes/:id', async (req, res) => {
+    deleteRecipe(Recipe,  req, res)
+})
 app.post('/useradd', (req, res) => {
     userAdd(userAdded, req, res)
 })
@@ -86,3 +80,6 @@ app.get('/users/', async (req, res) => {
 app.post('/logincheck', async (req, res) => {
     firstTimeChecker(userAdded, req, res)
 });
+app.post('/login', async(req,res) => {
+    loginCredentials(userAdded, req, res)
+})

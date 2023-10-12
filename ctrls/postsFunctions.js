@@ -1,4 +1,12 @@
-
+export async function allPosts(Recipe, res) {
+    const recipes = await Recipe.find({});
+    res.json(recipes) 
+}
+export async function individualPost(Recipe, req, res){
+    const id = req.params.id
+    const recipes = await Recipe.findById(id)
+    res.json(recipes)
+}
 export  async function postCreator(Recipe, req, res){
     const imagePath = req.file.filename 
     const imageUrl = `http://localhost:4000/assets/${imagePath}`
