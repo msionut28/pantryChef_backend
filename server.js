@@ -5,13 +5,21 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path'
 import 'dotenv/config';
-import { adminGenerator } from './ctrls/admin.js';
-import { firstTimeChecker } from './ctrls/loginChecker.js';
-import { userRecipe } from './ctrls/usersRecipe.js';
-import { membershipUpdater } from './ctrls/membershipUpdater.js'
 import { userAdd } from './ctrls/userAdd.js'
-import { recipeGenerator } from './ctrls/recipeGenerator.js';
+import { allUsers } from './ctrls/allUsers.js';
+import { individualUser } from './ctrls/individualUser.js';
+import { firstTimeChecker } from './ctrls/loginChecker.js';
+import { adminGenerator } from './ctrls/admin.js';
+import { membershipUpdater } from './ctrls/membershipUpdater.js'
 import { postCreator } from './ctrls/postCreator.js';
+import { allPosts } from './ctrls/allPosts.js';
+import { individualPost } from './ctrls/individualPost.js';
+import { recipeGenerator } from './ctrls/recipeGenerator.js';
+import { allRecipes } from './ctrls/allRecipes.js';
+import { individualRecipe } from './ctrls/individualRecipe.js';
+import { userRecipe } from './ctrls/usersRecipe.js';
+import { generatedRecipeSchema, recipeSchema, userSchema } from './schemas/schemas.js';
+
 
 //*APP SETUP
 const app = express()
@@ -23,8 +31,12 @@ app.listen(port, () => {
     console.log(`listenting on port: ${port}`);
 })
 
-//*DATABASE CONNECTION
+//*DATABASE CONNECTION AND SETTINGS
 const pantryChef = mongoose.createConnection(process.env.DATABASE_URL)
+const Recipe = pantryChef.model('Recipe', recipeSchema);
+const userAdded = pantryChef.model('User', userSchema)
+const generatedRecipe = pantryChef.model('generatedRecipe', generatedRecipeSchema)
+adminGenerator(userAdded)
 
 //*UPLOADER SETTINGS
 const storage = multer.diskStorage({
@@ -34,55 +46,27 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage })
-//*SCHEMAS
-const recipeSchema = new mongoose.Schema({
-    title: String,
-    description: String,
-    image: String
-})
-const userSchema = new mongoose.Schema({
-    userName: String,
-    password: String,
-    lastLogin: String,
-    membership: {type: Number, default: 0},
-    recipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'generatedRecipe' }],
-    isAdmin: {type: Boolean, default: false}
-})
-const generatedRecipeSchema = new mongoose.Schema({
-    title: String,
-    ingredients: [String],
-    description: String
-})
 
-const Recipe = pantryChef.model('Recipe', recipeSchema);
-const userAdded = pantryChef.model('User', userSchema)
-const generatedRecipe = pantryChef.model('generatedRecipe', generatedRecipeSchema)
-adminGenerator(userAdded)
+
 
 //*ROUTERS
 app.post('/create/', async (req, res) => {
     recipeGenerator(generatedRecipe, req, res)
 })
 app.get('/generated/:id', async (req, res) => {
-    const id = req.params.id
-    const generated = await generatedRecipe.findById(id)
-    res.json(generated)
+    individualRecipe(generatedRecipe, req, res)
 })
 app.get('/generated', async(req, res) => {
-    const generated = await generatedRecipe.find({});
-    res.json(generated) 
+    allRecipes(generatedRecipe, res)
 })
 app.post('/recipes/add', upload.single('image'), (req, res) => {
     postCreator(Recipe, req, res)
 })
 app.get('/recipes', async(req, res) => {
-    const recipes = await Recipe.find({});
-    res.json(recipes) 
+    allPosts(Recipe, res)
 })
 app.get('/recipes/:id', async (req, res) => {
-    const id = req.params.id
-    const recipes = await Recipe.findById(id)
-    res.json(recipes)
+    individualPost(Recipe, req, res)
 })
 app.post('/useradd', (req, res) => {
     userAdd(userAdded, req, res)
@@ -93,17 +77,12 @@ app.put('/users/:userName', async (req, res) => {
 app.post('/users/:userName/addrecipe', async (req, res) => {
     userRecipe(userAdded, req, res)
 });
-  
 app.get('/users/:userName', async (req, res) => {
-    const userName = req.params.userName
-    const user = await userAdded.findOne({userName: userName})
-    res.json(user)
+    individualUser(userAdded, req, res)
 })
 app.get('/users/', async (req, res) => {
-    const user = await userAdded.find({})
-    res.json(user)
+    allUsers(userAdded, res)
 })
-
 app.post('/logincheck', async (req, res) => {
     firstTimeChecker(userAdded, req, res)
 });
