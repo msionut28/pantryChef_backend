@@ -8,7 +8,7 @@ import 'dotenv/config';
 import { adminGenerator } from './ctrls/admin.js';
 import { loginCredentials, allUsers, individualUser, firstTimeChecker, membershipUpdater, userAdd, userRecipe } from './ctrls/userFunctions.js';
 import { postCreator, allPosts, individualPost } from './ctrls/postsFunctions.js';
-import { recipeGenerator, allRecipes, individualRecipe, deleteRecipe} from './ctrls/recipeFunctions.js';
+import { recipeGenerator, allRecipes, individualRecipe, deleteRecipe, editRecipe} from './ctrls/recipeFunctions.js';
 import { generatedRecipeSchema, recipeSchema, userSchema } from './schemas/schemas.js';
 
 
@@ -18,9 +18,7 @@ const port = process.env.PORT || 4000
 app.use(cors())
 app.use(bodyParser.json())
 app.use('/assets', express.static('assets'))
-app.listen(port, () => {
-    console.log(`listenting on port: ${port}`);
-})
+app.listen(port, () => { console.log(`listenting on port: ${port}`); })
 
 //*DATABASE CONNECTION AND SETTINGS
 const pantryChef = mongoose.createConnection(process.env.DATABASE_URL)
@@ -61,6 +59,9 @@ app.get('/recipes/:id', async (req, res) => {
 })
 app.delete('/recipes/:id', async (req, res) => {
     deleteRecipe(Recipe,  req, res)
+})
+app.put('/recipes/:id', async (req, res) => {
+    editRecipe(Recipe, req, res)
 })
 app.post('/useradd', (req, res) => {
     userAdd(userAdded, req, res)

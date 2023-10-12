@@ -14,7 +14,7 @@ export async function loginCredentials(User, req, res){
         return res.status(401).json({ message: 'Password does not match!' })
     }
     const token = jwt.sign({ userId: user._id, userName: user.username, isAdmin: user.isAdmin}, process.env.JWT_TOKEN, {expiresIn: '2h'})
-    res.status(200).json({ token, isAdmin: user.isAdmin })
+    res.status(200).json({ token, userName: user.userName, isAdmin: user.isAdmin })
 }
 
 export async function allUsers(User, res){

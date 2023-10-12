@@ -54,3 +54,13 @@ export async function deleteRecipe(Recipe, req, res){
       res.sendStatus(500)
   })
 }
+
+export async function editRecipe(Recipe, req, res){
+  Recipe.updateOne({"_id": req.params.id}, {title: req.body.title, description: req.body.description})
+  .then(() => {
+      res.json({message: 'Recipe updated!'})
+  })
+  .catch(error => {
+      res.sendStatus(500)
+  })
+}
