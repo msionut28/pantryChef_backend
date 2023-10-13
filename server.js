@@ -46,8 +46,8 @@ app.get('/generated/:id', async (req, res) => {
     individualRecipe(generatedRecipe, req, res)
 })
 app.delete('/generated/:id', async (req, res) => {
-    deleteRecipe(generatedRecipe,  req, res)
-    })
+    deleteRecipe(generatedRecipe, userAdded, req, res)
+})
 app.get('/generated', async(req, res) => {
     allRecipes(generatedRecipe, res)
 })

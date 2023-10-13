@@ -45,14 +45,29 @@ export async function allRecipes(Recipe, res){
     res.json(generated) 
 }
 
-export async function deleteRecipe(Recipe, req, res){
-  Recipe.deleteOne({"_id": req.params.id})
-  .then(() => {
-      res.json({message: 'deleted'})
-  })
-  .catch(error => {
-      res.sendStatus(500)
-  })
+export async function deleteRecipe(Recipe, User, req, res){
+    try {
+      const currentUser = await User.find({ "recipes": req.params.id })
+      if (currentUser.length === 0) {
+        return res.status(404).json({ error: "Recipe not found in user's recipes" })
+      }
+      const user = currentUser[0];
+      const userRecipe = user.recipes;
+      const dbRecipeId = req.params.id;
+      const recipeIndex = userRecipe.findIndex((recipeRef) =>
+        recipeRef.equals(dbRecipeId)
+      )
+      if (recipeIndex === -1) {
+        return res.status(404).json({ error: "Recipe not found in user's recipes" })
+      }
+      user.recipes.splice(recipeIndex, 1)
+      await user.save()
+      await Recipe.findByIdAndRemove(dbRecipeId)
+      res.json({ message: 'Recipe deleted' })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: "Internal server error" })
+    }
 }
 
 export async function editRecipe(Recipe, req, res){
