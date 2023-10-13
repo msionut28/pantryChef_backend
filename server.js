@@ -45,6 +45,9 @@ app.post('/create/', async (req, res) => {
 app.get('/generated/:id', async (req, res) => {
     individualRecipe(generatedRecipe, req, res)
 })
+app.delete('/generated/:id', async (req, res) => {
+    deleteRecipe(generatedRecipe,  req, res)
+    })
 app.get('/generated', async(req, res) => {
     allRecipes(generatedRecipe, res)
 })
@@ -58,7 +61,7 @@ app.get('/recipes/:id', async (req, res) => {
     individualPost(Recipe, req, res)
 })
 app.delete('/recipes/:id', async (req, res) => {
-    deleteRecipe(Recipe,  req, res)
+deleteRecipe(Recipe,  req, res)
 })
 app.put('/recipes/:id', async (req, res) => {
     editRecipe(Recipe, req, res)
