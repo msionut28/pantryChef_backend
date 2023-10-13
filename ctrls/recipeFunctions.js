@@ -71,7 +71,16 @@ export async function deleteRecipe(Recipe, User, req, res){
 }
 
 export async function editRecipe(Recipe, req, res){
-  Recipe.updateOne({"_id": req.params.id}, {title: req.body.title, description: req.body.description})
+  const recipe = req.body
+  Recipe.updateOne({"_id": req.params.id}, {
+    title: recipe.title,
+    time: recipe.time,
+    people: recipe.people,
+    calories: recipe.calories,
+    difficulty: recipe.difficulty, 
+    description: recipe.description, 
+    instructions: recipe.instructions,
+    ingredients: recipe.ingredients})
   .then(() => {
       res.json({message: 'Recipe updated!'})
   })

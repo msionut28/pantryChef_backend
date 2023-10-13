@@ -2,7 +2,13 @@ import mongoose from 'mongoose';
 
 export const recipeSchema = new mongoose.Schema({
     title: String,
+    time: String,
+    people: String,
+    calories: String,
+    difficulty: String,
     description: String,
+    instructions: String,
+    ingredients: [String],
     image: String
 })
 export const userSchema = new mongoose.Schema({
