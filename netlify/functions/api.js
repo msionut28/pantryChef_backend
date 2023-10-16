@@ -3,8 +3,8 @@ import serverless from 'serverless-http';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import multer from 'multer';
-import path from 'path'
+// import multer from 'multer';
+// import path from 'path'
 import 'dotenv/config';
 import { adminGenerator } from '../../ctrls/admin.js';
 import { loginCredentials, allUsers, individualUser, firstTimeChecker, membershipUpdater, userAdd, userRecipe } from '../../ctrls/userFunctions.js';
@@ -14,10 +14,10 @@ import { generatedRecipeSchema, recipeSchema, userSchema } from '../../schemas/s
 
 //*APP SETUP
 const api = express()
-const port = process.env.PORT || 4000
+// const port = process.env.PORT || 4000
 api.use(cors())
 api.use(bodyParser.json())
-api.use('/assets', express.static('assets'))
+// api.use('/assets', express.static('assets'))
 // app.listen(port, () => { console.log(`listenting on port: ${port}`); })
 
 //*DB CONNECTION AND SETTINGS
@@ -28,13 +28,13 @@ const generatedRecipe = pantryChef.model('generatedRecipe', generatedRecipeSchem
 adminGenerator(userAdded)
 
 //*UPLOADER SETTINGS
-const storage = multer.diskStorage({
-    destination: './assets',
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
-    }
-})
-const upload = multer({ storage: storage })
+// const storage = multer.diskStorage({
+//     destination: './assets',
+//     filename: function (req, file, cb) {
+//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+//     }
+// })
+// const upload = multer({ storage: storage })
 
 //*ROUTER
 const router = Router()
