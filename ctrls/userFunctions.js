@@ -53,8 +53,7 @@ export async function membershipUpdater(User, req, res) {
     try {
         const updatedUser = await User.findOneAndUpdate(
             { userName: userName },
-            { $set: { membership: newMembership } },
-            { new: true }
+            { $set: { membership: newMembership } }
           );
           if (updatedUser){
             return res.status(200).json({ message: 'Membership updated successfully' })
