@@ -50,9 +50,9 @@ router.delete('/generated/:id', async (req, res) => {
 router.get('/generated', async(req, res) => {
     allRecipes(generatedRecipe, res)
 })
-router.post('/recipes/add', upload.single('image'), (req, res) => {
-    postCreator(Recipe, req, res)
-})
+// router.post('/recipes/add', upload.single('image'), (req, res) => {
+//     postCreator(Recipe, req, res)
+// })
 router.get('/recipes', async(req, res) => {
     allPosts(Recipe, res)
 })
