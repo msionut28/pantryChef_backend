@@ -8,8 +8,6 @@ export async function individualPost(Recipe, req, res){
     res.json(recipes)
 }
 export  async function postCreator(Recipe, req, res){
-    const imagePath = req.file.filename 
-    const imageUrl = `http://localhost:4000/assets/${imagePath}`
     const recipe = req.body
     const list = new Recipe({
         title: recipe.title,
@@ -20,7 +18,7 @@ export  async function postCreator(Recipe, req, res){
         description: recipe.description, 
         instructions: recipe.instructions,
         ingredients: recipe.ingredients,
-        image: imageUrl
+        image: recipe.image
     })
     list.save()
     .then(() => {

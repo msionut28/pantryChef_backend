@@ -8,7 +8,7 @@ import 'dotenv/config';
 import { adminGenerator } from './ctrls/admin.js';
 import { loginCredentials, allUsers, individualUser, firstTimeChecker, membershipUpdater, userAdd, userRecipe } from './ctrls/userFunctions.js';
 import { postCreator, allPosts, individualPost } from './ctrls/postsFunctions.js';
-import { recipeGenerator, allRecipes, individualRecipe, deleteRecipe, editRecipe} from './ctrls/recipeFunctions.js';
+import { recipeGenerator, allRecipes, individualRecipe, deleteRecipe, editRecipe, randomRecipe} from './ctrls/recipeFunctions.js';
 import { generatedRecipeSchema, recipeSchema, userSchema } from './schemas/schemas.js';
 
 
@@ -86,4 +86,8 @@ app.post('/logincheck', async (req, res) => {
 });
 app.post('/login', async(req,res) => {
     loginCredentials(userAdded, req, res)
+})
+
+app.get('/randomrecipe', async(req, res) => {
+    randomRecipe()
 })
